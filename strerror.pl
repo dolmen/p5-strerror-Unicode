@@ -9,28 +9,35 @@ use Encode 'decode';
 
 use open ':locale', ':std';
 
+
+my @meth = (
+    'strerror(EINTR)' => sub { strerror(EINTR) },
+    '"$!"'            => sub { local $! = EINTR; "$!" },
+);
+
+
 sub show_EINTR
 {
     my $locale = shift;
-    print "[Locale: $locale]\n";
-    # Raw values
-    printf("  strerror(EINTR): %s\n", strerror(EINTR));
-    $! = EINTR;
-    printf("  \"\$!\":            %s\n", "$!");
 
-    # Converted using locale information
-    my $lc_ctype_orig = setlocale(LC_CTYPE);
+    # Extract the CODESET of LC_MESSAGES
+    my $lc_ctype = setlocale(LC_CTYPE);
     setlocale(LC_CTYPE, setlocale(LC_MESSAGES));
     my $codeset = langinfo(I18N::Langinfo::CODESET());
-    printf("  Decoding from %s...\n", $codeset);
-    printf("  strerror(EINTR): %s\n", decode($codeset, strerror(EINTR)));
-    $! = EINTR;
-    printf("  \"\$!\":            %s\n", decode($codeset, "$!"));
-    setlocale(LC_CTYPE, $lc_ctype_orig);
+    # Restore LC_CTYPE
+    setlocale(LC_CTYPE, $lc_ctype);
+
+    print "[Locale: $locale  CodeSet: $codeset]\n";
+
+    for(my $i=0; $i<$#meth; $i+=2) {
+	my $msg = $meth[$i+1]->();
+	printf "      Raw %15s: %s\n", $meth[$i], $msg;
+	printf "  Decoded %15s: %s\n", $meth[$i], decode($codeset, $msg);
+    }
 }
 
 
-show_EINTR('default ('.setlocale(LC_MESSAGES).', CODESET='.langinfo(I18N::Langinfo::CODESET()).')');
+show_EINTR('default ('.setlocale(LC_MESSAGES).')');
 
 
 # Requires fr_FR.UTF8 locale
