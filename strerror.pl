@@ -9,17 +9,22 @@ use Encode 'decode';
 
 use open ':locale', ':std';
 
+# Test with each errno given in @ARGV
+@ARGV = qw<EINTR> unless @ARGV;
+
 # List of tests:
 #   name => sub
 my @TESTS = map
 {
     my $str = $_;
     my $num = do { no strict 'refs'; &{"Errno::$str"} };
+
+    # Push 4 elements in @TESTS for each errno
     (
 	"strerror($str)" => sub { strerror($num) },
 	'"$!"'           => sub { local $! = $num; "$!" },
     )
-} qw<EINTR>;
+} @ARGV;
 
 
 
