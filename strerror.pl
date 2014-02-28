@@ -2,18 +2,25 @@
 use strict;
 use warnings;
 
-use Errno 'EINTR';
+use Errno ();
 use POSIX qw<strerror setlocale LC_MESSAGES LC_CTYPE>;
 use I18N::Langinfo 'langinfo';
 use Encode 'decode';
 
 use open ':locale', ':std';
 
+# List of tests:
+#   name => sub
+my @TESTS = map
+{
+    my $str = $_;
+    my $num = do { no strict 'refs'; &{"Errno::$str"} };
+    (
+	"strerror($str)" => sub { strerror($num) },
+	'"$!"'           => sub { local $! = $num; "$!" },
+    )
+} qw<EINTR>;
 
-my @TESTS = (
-    'strerror(EINTR)' => sub { strerror(EINTR) },
-    '"$!"'            => sub { local $! = EINTR; "$!" },
-);
 
 
 sub test
