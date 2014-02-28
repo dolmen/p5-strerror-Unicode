@@ -43,8 +43,8 @@ sub test
 
     for(my $i=0; $i<$#$tests; $i+=2) {
 	my $msg = $tests->[$i+1]->();
-	printf "      Raw %20s: %s\n", $tests->[$i], $msg;
-	printf "  Decoded %20s: %s\n", $tests->[$i], decode($codeset, $msg);
+	printf "  %20s     raw: %s\n", $tests->[$i], $msg;
+	printf "  %20s decoded: %s\n", $tests->[$i], decode($codeset, $msg);
     }
 }
 
