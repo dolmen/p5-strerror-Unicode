@@ -55,5 +55,13 @@ test('default ('.setlocale(LC_MESSAGES).')', \@TESTS);
 # Requires fr_FR.UTF8 locale
 foreach my $locale (qw<POSIX fr_FR.UTF-8 de_DE.UTF-8>) {
     setlocale(LC_MESSAGES, $locale);
+    if ($!) {
+	if ($!{'ENOENT'}) {
+	    print STDERR "Skipping '$locale': locale not supported\n";
+	} else {
+	    printf STDERR "Skipping '%s': locale error %d: %s\n", $locale, 0+$!, "$!";
+	}
+	next;
+    }
     test($locale, \@TESTS);
 }
