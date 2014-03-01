@@ -44,7 +44,7 @@ to:
 	Encode::decode($codeset, $msg)
     }
 
-$! is a short variable name, meant to ease the reporting of errors.
+`$!` is a short variable name, meant to ease the reporting of errors.
 This complexity completely goes against the aim.
 
 As this issue is not visible to english locales, this issue is very old, as old
@@ -60,5 +60,6 @@ take into account that the returned value is Unicode.
 
 ### Test cases
 
-[strerror.pl](strerror.pl)
-[err-8bits.pl](err--8bits.pl)
+* [simple.pl](simple.pl)
+* [strerror.pl](strerror.pl)
+* [err-8bits.pl](err-8bits.pl)
