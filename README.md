@@ -50,6 +50,13 @@ This complexity completely goes against the aim.
 As this issue is not visible to english locales, this issue is very old, as old
 as Unicode support in Perl.
 
+#### Win32
+
+Win32 does not seem to be affected by this issue: [`strerror()`](http://msdn.microsoft.com/en-us/library/zc53h9bh.aspx)
+messages in MSVCRT does not appear to be localized and returns English ASCII strings even on French Windows 7.
+
+TODO: check if `_wcserror()` behaves differently and returns localized strings.
+
 ### Proposed solution
 
 Instead Perl 5 should transparently decode the error messages from the codeset
